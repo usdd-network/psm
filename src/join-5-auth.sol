@@ -79,7 +79,7 @@ contract AuthGemJoin5 {
     }
 
     // nile: TZDnq7egPqzi7H4SXy1ABvwaVRvRTaVfJW  mainnet:0xa614f803B6FD780986A42c78Ec9c7f77e6DeD13C
-    address constant USDTAddr = 0xff0CF484cfA2C233446873f2b4a8b75De6bc0FE9;
+    address constant USDTAddr = 0xa614f803B6FD780986A42c78Ec9c7f77e6DeD13C;
 
     function safeTransfer(address token, address to, uint value) internal returns (bool){
         // bytes4(keccak256(bytes('transfer(address,uint256)')));
