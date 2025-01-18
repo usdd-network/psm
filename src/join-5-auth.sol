@@ -78,7 +78,7 @@ contract AuthGemJoin5 {
         require(y == 0 || (z = x * y) / y == x, "AuthGemJoin5/overflow");
     }
 
-    // nile: TZDnq7egPqzi7H4SXy1ABvwaVRvRTaVfJW  mainnet:0xa614f803B6FD780986A42c78Ec9c7f77e6DeD13C
+    // nile: 0xff0CF484cfA2C233446873f2b4a8b75De6bc0FE9  mainnet:0xa614f803B6FD780986A42c78Ec9c7f77e6DeD13C
     address constant USDTAddr = 0xa614f803B6FD780986A42c78Ec9c7f77e6DeD13C;
 
     function safeTransfer(address token, address to, uint value) internal returns (bool){
