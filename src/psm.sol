@@ -32,7 +32,7 @@ interface AuthGemJoinAbstract {
     function exit(address, uint256) external;
 }
 
-// USDD Peg Stability Module for USDT
+// USDD Peg Stability Module
 contract UsddPsm {
 
     // --- Auth ---
@@ -139,7 +139,7 @@ contract UsddPsm {
 
     // --- Primary Functions ---
 
-    // Sell USDT for USDD
+    // Sell gem for USDD
     function sellGem(address usr, uint256 gemAmt) external {
         require(sellEnabled == 1, "UsddPsm/sell-not-enabled");
 
@@ -147,7 +147,7 @@ contract UsddPsm {
         uint256 fee = mul(gemAmt18, tin) / WAD;
         uint256 usddAmt = sub(gemAmt18, fee);
 
-        // Transfer USDT in and mint USDD
+        // Transfer gem in and mint USDD
         gemJoin.join(address(this), gemAmt, msg.sender);
         vat.frob(ilk, address(this), address(this), address(this), int256(gemAmt18), int256(gemAmt18));
 
@@ -160,7 +160,7 @@ contract UsddPsm {
         emit SellGem(usr, gemAmt, fee);
     }
 
-    // Buy USDT with USDD
+    // Buy gem with USDD
     function buyGem(address usr, uint256 gemAmt) external {
         require(buyEnabled == 1, "UsddPsm/buy-not-enabled");
 
@@ -172,7 +172,7 @@ contract UsddPsm {
         require(usdd.transferFrom(msg.sender, address(this), usddAmt), "UsddPsm/failed-transfer");
         usddJoin.join(address(this), usddAmt);
 
-        // Burn USDD and release USDT
+        // Burn USDD and release gem
         vat.frob(ilk, address(this), address(this), address(this), - int256(gemAmt18), - int256(gemAmt18));
         gemJoin.exit(usr, gemAmt);
 
