@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2021 Dai Foundation
+// Copyright (C) 2021 Usdd Foundation
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,7 @@
 
 pragma solidity ^0.6.12;
 
-import "ds-test/test.sol";
+import "forge-std/Test.sol";
 import "ds-value/value.sol";
 import "ds-token/token.sol";
 import {Vat} from "usddv2/dss/vat.sol";
@@ -25,8 +25,8 @@ import {Vow} from "usddv2/dss/vow.sol";
 import {GemJoin, UsddJoin} from "usddv2/dss/join.sol";
 import {Usdd} from "usddv2/dss/usdd.sol";
 
-import "../psm.sol";
-import "../join-5-auth.sol";
+import "../src/psm.sol";
+import "../src/join-5-auth.sol";
 
 interface Hevm {
     function warp(uint256) external;
@@ -91,7 +91,7 @@ contract User {
     }
 }
 
-contract UsddPsmTest is DSTest {
+contract UsddPsmTest is Test {
     Hevm hevm;
 
     address me;
@@ -298,33 +298,37 @@ contract UsddPsmTest is DSTest {
         assertEq(art2, 1 * 10 ** 12);
     }
 
-    function testFail_sellGem_insufficient_gem() public {
+    function testRevert_sellGem_insufficient_gem() public {
         User user1 = new User(usdd, gemA, psmA);
+        vm.expectRevert("ds-token-insufficient-balance");
         user1.sellGem(40 * USDX_WAD);
     }
 
-    function testFail_swap_both_small_fee_insufficient_usdd() public {
+    function testRevert_swap_both_small_fee_insufficient_usdd() public {
         psmA.file("tin", 1); // Very small fee pushes you over the edge
 
         User user1 = new User(usdd, gemA, psmA);
         usdx.transfer(address(user1), 40 * USDX_WAD);
         user1.sellGem(40 * USDX_WAD);
+        vm.expectRevert("Usdd/insufficient-balance");
         user1.buyGem(40 * USDX_WAD);
     }
 
-    function testFail_sellGem_over_line() public {
+    function testRevert_sellGem_over_line() public {
         usdx.mint(1000 * USDX_WAD);
         usdx.approve(address(gemA));
+        vm.expectRevert("Usdd/insufficient-balance");
         psmA.buyGem(me, 2000 * USDX_WAD);
     }
 
-    function testFail_two_users_insufficient_usdd() public {
+    function testRevert_two_users_insufficient_usdd() public {
         User user1 = new User(usdd, gemA, psmA);
         usdx.transfer(address(user1), 40 * USDX_WAD);
         user1.sellGem(40 * USDX_WAD);
 
         User user2 = new User(usdd, gemA, psmA);
         usdd.mint(address(user2), 39 ether);
+        vm.expectRevert("Usdd/insufficient-balance");
         user2.buyGem(40 * USDX_WAD);
     }
 
@@ -335,8 +339,9 @@ contract UsddPsmTest is DSTest {
         psmA.buyGem(me, 0);
     }
 
-    function testFail_direct_deposit() public {
+    function testRevert_direct_deposit() public {
         usdx.approve(address(gemA), uint(- 1));
+        vm.expectRevert();
         gemA.join(me, 10 * USDX_WAD, me);
     }
 
@@ -380,13 +385,14 @@ contract UsddPsmTest is DSTest {
         assertEq(psmA.buyEnabled(), 1);
     }
 
-    function testFail_non_auth_file() public {
+    function testRevert_non_auth_file() public {
         bytes32 storageSlot = keccak256(abi.encode(address(this), uint256(0)));
         hevm.store(
             address(psmA),
             storageSlot,
             bytes32(uint256(0))
         );
+        vm.expectRevert("UsddPsm/not-authorized");
         psmA.file("sellEnabled", 0);
     }
 }

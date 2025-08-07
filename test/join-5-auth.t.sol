@@ -16,13 +16,13 @@
 
 pragma solidity ^0.6.12;
 
-import "ds-test/test.sol";
+import "forge-std/Test.sol";
 import "ds-value/value.sol";
 import "ds-token/token.sol";
 
 import {Vat} from "usddv2/dss/vat.sol";
 
-import "../join-5-auth.sol";
+import "../src/join-5-auth.sol";
 
 interface Hevm {
     function warp(uint256) external;
@@ -69,7 +69,7 @@ contract User {
 
 }
 
-contract AuthGemJoin5Test is DSTest {
+contract AuthGemJoin5Test is Test {
     
     Hevm hevm;
 
@@ -108,8 +108,9 @@ contract AuthGemJoin5Test is DSTest {
         (ok,) = address(authGemJoin).call(abi.encodeWithSignature(sig, me, wad, me));
     }
 
-    function testFail_tooManyDecimals() public {
+    function testRevert_tooManyDecimals() public {
         TestToken xmpl19 = new TestToken("XMPL", 19);
+        vm.expectRevert("AuthGemJoin5/decimals-18-or-higher");
         new AuthGemJoin5(address(vat), ilk, address(xmpl19));
     }
 

@@ -1,0 +1,13 @@
+[profile.default]
+src = 'src'
+test = 'test'
+out = 'out'
+libs = ['lib']
+remappings = [
+    'forge-std/=lib/forge-std/src/',
+    'ds-value/=lib/ds-value/src/',
+    'ds-token/=lib/ds-token/src/',
+    'usddv2/=lib/usddv2/src/'
+]
+optimizer = true
+optimizer_runs = 10000
