@@ -78,30 +78,12 @@ contract AuthGemJoin5 {
         require(y == 0 || (z = x * y) / y == x, "AuthGemJoin5/overflow");
     }
 
-    // nile: 0xff0CF484cfA2C233446873f2b4a8b75De6bc0FE9  mainnet:0xa614f803B6FD780986A42c78Ec9c7f77e6DeD13C
-    address constant USDTAddr = 0xa614f803B6FD780986A42c78Ec9c7f77e6DeD13C;
-
-    function safeTransfer(address token, address to, uint value) internal returns (bool){
-        // bytes4(keccak256(bytes('transfer(address,uint256)')));
-        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0xa9059cbb, to, value));
-        if (token == USDTAddr) {
-            return success;
-        }
-        return (success && (data.length == 0 || abi.decode(data, (bool))));
-    }
-
-    function safeTransferFrom(address token, address from, address to, uint value) internal returns (bool){
-        // bytes4(keccak256(bytes('transferFrom(address,address,uint256)')));
-        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0x23b872dd, from, to, value));
-        return (success && (data.length == 0 || abi.decode(data, (bool))));
-    }
-
     function join(address urn, uint256 amt, address msgSender) external auth {
         require(live == 1, "AuthGemJoin5/not-live");
         uint256 wad = mul(amt, 10 ** (18 - dec));
         require(int256(wad) >= 0, "AuthGemJoin5/overflow");
         vat.slip(ilk, urn, int256(wad));
-        require(safeTransferFrom(address(gem), msgSender, address(this), amt), "AuthGemJoin5/failed-transfer");
+        require(gem.transferFrom(msgSender, address(this), amt), "AuthGemJoin5/failed-transfer");
         emit Join(urn, amt, msgSender);
     }
 
@@ -109,7 +91,7 @@ contract AuthGemJoin5 {
         uint256 wad = mul(amt, 10 ** (18 - dec));
         require(int256(wad) >= 0, "AuthGemJoin5/overflow");
         vat.slip(ilk, msg.sender, -int256(wad));
-        require(safeTransfer(address(gem), usr, amt), "AuthGemJoin5/failed-transfer");
+        require(gem.transfer(usr, amt), "AuthGemJoin5/failed-transfer");
         emit Exit(usr, amt);
     }
 }
