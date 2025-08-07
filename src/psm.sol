@@ -16,9 +16,9 @@
 
 pragma solidity ^0.6.12;
 
-import {UsddJoinAbstract} from "dss-interfaces/dss/UsddJoinAbstract.sol";
-import {UsddAbstract} from "dss-interfaces/dss/UsddAbstract.sol";
-import {VatAbstract} from "dss-interfaces/dss/VatAbstract.sol";
+import {UsddJoinAbstract} from "src/interfaces/dss/UsddJoinAbstract.sol";
+import {UsddAbstract} from "src/interfaces/dss/UsddAbstract.sol";
+import {VatAbstract} from "src/interfaces/dss/VatAbstract.sol";
 
 interface AuthGemJoinAbstract {
     function dec() external view returns (uint256);
