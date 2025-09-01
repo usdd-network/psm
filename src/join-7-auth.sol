@@ -58,8 +58,8 @@ contract AuthGemJoin7 {
     // Events
     event Rely(address indexed usr);
     event Deny(address indexed usr);
-    event Join(address indexed usr, uint256 wad, address indexed msgSender);
-    event Exit(address indexed usr, uint256 wad);
+    event Join(address indexed usr, uint256 amt, address indexed msgSender);
+    event Exit(address indexed usr, uint256 amt);
     event Cage();
     event SetImplementation(address indexed implementation, uint256 permitted);
 
