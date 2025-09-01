@@ -27,13 +27,13 @@ interface AuthGemJoinAbstract {
 
     function ilk() external view returns (bytes32);
 
-    function join(address, uint256, address) external;
+    function join(address, uint256, address) external returns (uint256);
 
     function exit(address, uint256) external;
 }
 
 // USDD Peg Stability Module
-contract UsddPsm {
+contract UsddPsm7 {
 
     // --- Auth ---
     mapping(address => uint256) public wards;
@@ -143,13 +143,12 @@ contract UsddPsm {
     function sellGem(address usr, uint256 gemAmt) external {
         require(sellEnabled == 1, "UsddPsm/sell-not-enabled");
 
-        uint256 gemAmt18 = mul(gemAmt, to18ConversionFactor);
-        uint256 fee = mul(gemAmt18, tin) / WAD;
-        uint256 usddAmt = sub(gemAmt18, fee);
-
         // Transfer gem in and mint USDD
-        gemJoin.join(address(this), gemAmt, msg.sender);
-        vat.frob(ilk, address(this), address(this), address(this), int256(gemAmt18), int256(gemAmt18));
+        uint256 wad = gemJoin.join(address(this), gemAmt, msg.sender);
+        vat.frob(ilk, address(this), address(this), address(this), int256(wad), int256(wad));
+
+        uint256 fee = mul(wad, tin) / WAD;
+        uint256 usddAmt = sub(wad, fee);
 
         // Send fee to system treasury
         vat.move(address(this), vow, mul(fee, RAY));
