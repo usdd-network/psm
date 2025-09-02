@@ -95,15 +95,16 @@ contract AuthGemJoin7 {
         require((z = x - y) <= x, "AuthGemJoin7/underflow");
     }
 
-    function join(address usr, uint256 amt, address msgSender) external auth {
+    function join(address usr, uint256 amt, address msgSender) external auth returns (uint256 wad) {
         require(live == 1, "AuthGemJoin7/not-live");
         require(implementations[gem.upgradedAddress()] == 1, "AuthGemJoin7/implementation-invalid");
         uint256 bal = gem.balanceOf(address(this));
         gem.transferFrom(msgSender, address(this), amt);
-        uint256 wad = mul(sub(gem.balanceOf(address(this)), bal), 10 ** (18 - dec));
+        uint256 actualAmt = sub(gem.balanceOf(address(this)), bal);
+        wad = mul(actualAmt, 10 ** (18 - dec));
         require(int256(wad) >= 0, "AuthGemJoin7/overflow");
         vat.slip(ilk, usr, int256(wad));
-        emit Join(usr, amt, msgSender);
+        emit Join(usr, actualAmt, msgSender);
     }
 
     function exit(address usr, uint256 amt) external {
