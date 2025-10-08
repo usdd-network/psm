@@ -1,4 +1,4 @@
-/// join.sol -- Basic token adapters
+/// join-auth.sol -- Basic token adapters
 
 // Copyright (C) 2018 Rain <rainbreak@riseup.net>
 //
