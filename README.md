@@ -13,7 +13,7 @@ A **multi-chain peg stability module** that enables 1:1 swaps between USDD and m
 ## Supported Networks
 
 - **Ethereum Mainnet** (Chain ID: 1)
-- **Binance Smart Chain Mainnet** (Chain ID: 56)
+- **BNB Smart Chain Mainnet** (Chain ID: 56)
 - **TRON Mainnet**
 
 ## Contract Addresses
